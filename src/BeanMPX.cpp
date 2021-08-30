@@ -1,11 +1,9 @@
-#define RX 8
-#define TX 9
-
 // 
 // Includes
 //
 #include <Arduino.h>
 #include <BeanMPX.h>
+#include "config.h"
 
 //
 // Statics
@@ -424,12 +422,12 @@ void BeanMPX::begin() {
   TIMSK1 = 0;    
   
   // Transmit pin as outout
-  DDRB |= (1<<TX);	// RX/TX pins  	
+  MPX_TX_DIR |= (1<<MPX_TX_BIT);	// RX/TX pins
 
   // Receive pin as interupt 	
-  pciSetup(RX);
-  _receiveBitMask = digitalPinToBitMask(RX);
-  _transmitBitMask = digitalPinToBitMask(TX);  
+  pciSetup(MPX_RX);
+  _receiveBitMask = digitalPinToBitMask(MPX_RX);
+  _transmitBitMask = digitalPinToBitMask(MPX_TX);  
   
   active_object = this;
 }
@@ -478,7 +476,7 @@ void BeanMPX::sendMsg(const uint8_t *data, uint16_t datalen) {
   }
 
   frame[0] = 1;
-
+  
   memcpy(_transmit_buffer, frame, sizeof(frame));
   _tx_buffer_len = sizeof(frame);
   _tx_buffer_index = 0;
